@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captcha Example</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .captcha {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+        canvas {
+            margin-bottom: 10px;
+        }
+        input {
+            padding: 10px;
+            width: 80%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Canvas element to display the captcha image -->
+        <canvas id="captchaCanvas" width="280" height="90"></canvas>
+        <!-- Input field for user to enter captcha text -->
+        <input type="text" id="captchaInput" placeholder="Enter Captcha">
+        <div>
+            <!-- Button to submit the captcha input -->
+            <button onclick="validateCaptcha()">Submit</button>
+            <!-- Button to refresh the captcha image -->
+            <button onclick="refreshCaptcha()">Refresh Captcha</button>
+        </div>
+    </div>
+
+    <script>
+        // Function to generate random captcha text
+        function generateCaptchaText(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let captcha = '';
+            for (let i = 0; i < length; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return captcha;
+        }
+
+        // Function to create and display the captcha image
+        function createCaptchaImage(captchaText) {
+            const canvas = document.getElementById('captchaCanvas');
+            const ctx = canvas.getContext('2d');
+            // Fill the canvas with white background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Set font and color for the captcha text
+            ctx.font = '40px Arial';
+            ctx.fillStyle = 'black';
+            // Draw the captcha text on the canvas
+            ctx.fillText(captchaText, 50, 60);
+
+            // Add more noise to the captcha image
+            for (let i = 0; i < 3000; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.fillRect(x, y, 1, 1);
+            }
+
+            // Add more random lines to the captcha image
+            for (let i = 0; i < 20; i++) {
+                ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.stroke();
+            }
+
+            // Add blur effect to the captcha image
+            ctx.globalAlpha = 0.7;
+            ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height);
+        }
+
+        // Generate initial captcha text and image
+        let captchaText = generateCaptchaText(6);
+        console.log("Captcha Text:", captchaText);
+        createCaptchaImage(captchaText);
+
+        // Function to validate the user input against the captcha text
+        function validateCaptcha() {
+            const userInput = document.getElementById('captchaInput').value;
+            if (userInput === captchaText) {
+                alert('Captcha validated successfully!');
+            } else {
+                alert('Invalid Captcha. Please try again.');
+            }
+        }
+
+        // Function to refresh the captcha text and image
+        function refreshCaptcha() {
+            captchaText = generateCaptchaText(6);
+            console.log("New Captcha Text:", captchaText);
+            createCaptchaImage(captchaText);
+        }
+    </script>
+</body>
+</html>
